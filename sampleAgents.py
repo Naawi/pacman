@@ -169,4 +169,26 @@ class HungryAgent( Agent ):
         else:
             return ( 0, ( 0, 0 ) )
 
+        
+# SurvivalAgent
+# 
+# Uses the location of Pacman and the ghosts (and any
+# other information that may be helpful) to stay alive as long as possible
+class SurvivalAgent( Agent ):
+
+    def getAction( self, state ):
+        moves = api.legalActions( state )
+        if Directions.STOP in moves:
+            moves.remove( Directions.STOP )
+
+        successors = [ ( state.generateSuccessor( 0, action ), action ) for action in moves ]
+        scores = [ (self.ghostScore( api.whereAmI( state), api.ghosts( state)), action) for state, action in successors ]
+        bestScore = max( scores )[ 0 ]
+        bestActions = [ pair[ 1 ] for pair in scores if pair[ 0 ] == bestScore]
+        return random.choice( bestActions )
+
+    def ghostScore( self, pacman, ghosts ):
+        return min( [ util.manhattanDistance( pacman, ghost ) for ghost in ghosts ] )
+
+
 
